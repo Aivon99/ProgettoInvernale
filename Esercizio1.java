@@ -22,6 +22,8 @@ Devono essere gestiti i seguenti errori:
 
 //Divisione: un metodo per la lettura del file, una classe per ciascun metodo di conteggio, un main 
 
+
+
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -50,19 +52,26 @@ class Esercizio1{
         try (BufferedReader br = new BufferedReader(new FileReader(nomeFile))) {
             String riga;
             while ((riga = br.readLine()) != null) { 
-                String[] rigaSeparata = separaRiga(riga);
-                if(rigaSeparata[0] == percorsoFile & rigaSeparata[1] == estensione){
-                    contatore += Integer.parseInt(rigaSeparata[2]);
+                String[] parti = riga.split("\\s+");
+                if (parti.length != 2) continue;
+
+                String filePath = parti[0];
+                int fileSize = Integer.parseInt(parti[1]);
+
+                if (filePath.startsWith(percorsoFile) && filePath.endsWith("." + estensione)) {
+                    contatore += fileSize;
                 }
-            } 
+            }
+            
             br.close();
-        } 
+            } 
+         
         catch (FileNotFoundException e) { // eccezione File non Trovato
             System.out.println("File non Trovato, Stack segue: /n");
             e.printStackTrace(); 
             return -1;
         }
-
+              
         catch (IOException IOe){ // eccezione generica 
         
         }
@@ -70,24 +79,6 @@ class Esercizio1{
     }
  
  
-    public static String[] separaRiga(String riga){  
-        //Partendo dal fondo so che devono esserci numeri, proseguo dal fondo e al primo char non numerico segno la posizione,
-        // identica cosa per il . e / : dopodiche uso queste posizioni per estrarre ciò che mi serve   
-        char[] caratteri = riga.toCharArray();
-        int cont = caratteri.length ;
-        int[] posizioni;
-        boolean cond = true;
-        
-        while(cond & cont > 0){
-            if(!caratteri[cont].isDigit()  ) System.out.println("ya did something wrong mate");
-
-
-        }
-
-
-        return new String[] {"pappa" ,"pappa" };
     
-    }
-
 
 }
