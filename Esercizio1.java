@@ -47,7 +47,7 @@ class Esercizio1{
         }
     }
 
-    public static int Metodo1(String nomeFile, String percorsoFile ,String estensione){ //legge una riga alla volta e se la rica rispetta le condizioni aggiunge il valore numerico al contatore
+    public static int Metodo1(String nomeFile, String percorsoFile ,String estensione){ //O(n):legge una riga alla volta e se la ricerca rispetta le condizioni aggiunge il valore numerico al contatore
         int contatore = 0;
         try (BufferedReader br = new BufferedReader(new FileReader(nomeFile))) {
             String riga;
@@ -62,10 +62,8 @@ class Esercizio1{
                     contatore += fileSize;
                 }
             }
-            
             br.close();
             } 
-         
         catch (FileNotFoundException e) { // eccezione File non Trovato
             System.out.println("File non Trovato, Stack segue: /n");
             e.printStackTrace(); 
@@ -77,7 +75,11 @@ class Esercizio1{
         }
         return contatore;
     }
- 
+    public static int Metodo2(String nomeFile, String percorsoFile,String estensione){
+        
+        
+        return 1;
+    }
  
     
 
