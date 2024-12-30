@@ -24,12 +24,13 @@ public class Esercizio2 {
 
         try {
             // Parse input and initialize hashmap
-            List<Map.Entry< Integer, String>> packages = leggiFile(inputFile);
-            int truckCapacity = 50; // Example capacity
-            for (Map.Entry<Integer, String> entry : packages) {
+            List<Map.Entry< Integer, String>> pacchetti = leggiFile(inputFile);
+            int c = 50; // capacita max
+            
+            for (Map.Entry<Integer, String> entry : pacchetti) {
                 System.out.println(entry.getKey() + " - " + entry.getValue());
             }
-            //allocatePackages(packages, truckCapacity);
+            allocaPacchi(pacchetti, c);
         } catch (IOException e) {
             System.out.println("Error reading input file: " + e.getMessage());
         }
@@ -55,64 +56,56 @@ public class Esercizio2 {
         return pacchetti;
     }
 
-    // Allocate packages to trucks using a greedy heuristic and DP for truck optimization 
-    private static void allocatePackages(HashMap<String, Integer> packages, int capacity) {
-        int truckCount = 0;
+    private static void allocaPacchi(List<Map.Entry< Integer, String>> pacchetti, int C) {
+        int contatore = 0;
 
-        while (!packages.isEmpty()) {
-            truckCount++;
-            System.out.println("Camion: " + truckCount);
+        while (!pacchetti.isEmpty()) {
+            contatore++;
+            System.out.println("Camion: " + contatore);
 
-            HashMap <String, Integer> truckLoad = caricaCamion(packages, capacity);
-            int usedCapacity = 0;
+            HashMap <String, Integer> carico = caricaCamion( pacchetti, C);
+            int CUtilizzata = 0;
 
-            for (String pkg : truckLoad.keySet()) {
-                System.out.println(pkg + " " + truckLoad.get(pkg));
-                usedCapacity += truckLoad.get(pkg);
-                packages.remove(pkg); // rimuovi pacchetti utilizzati
+            for (String pkg : carico.keySet()) {
+                System.out.println(pkg + " " + carico.get(pkg));
+                CUtilizzata += carico.get(pkg);
+                pacchetti.remove(pkg); // rimuovi pacchetti utilizzati
             }
 
-            System.out.println("Capacità residua: " + (capacity - usedCapacity));
+            System.out.println("Capacità residua: " + (C - CUtilizzata));
             System.out.println();
         }
     }
 
     // DP per il singolo furgone
-    private static HashMap<String, Integer> caricaCamion(HashMap<String, Integer> packages, int capacity) {
+    private static HashMap<String, Integer> caricaCamion(List<Map.Entry<Integer, String>> pacchetti, int C) {
+        int[] dp = new int[C + 1];
+        boolean[][] selected = new boolean[pacchetti.size()][C + 1];
         
-        HashMap<String, Integer> result = new HashMap<>();
-        String[] packageNames = packages.keySet().toArray(new String[0]);
-
-        int[] weights = new int[packages.size()];
-        int i = 0;
-
-        for (String pkg : packageNames) {
-            weights[i++] = packages.get(pkg);
-        }
-
-        // DP table initialization
-        int[][] dp = new int[weights.length + 1][capacity + 1];
-
-        for (i = 1; i <= weights.length; i++) {
-            for (int w = 1; w <= capacity; w++) {
-                if (weights[i - 1] <= w) {
-                    dp[i][w] = Math.max(dp[i - 1][w], dp[i - 1][w - weights[i - 1]] + weights[i - 1]);
-                } else {
-                    dp[i][w] = dp[i - 1][w];
+        // Build the DP table
+        for (int i = 0; i < pacchetti.size(); i++) {
+            int weight = pacchetti.get(i).getKey();
+            for (int w = C; w >= weight; w--) {
+                if (dp[w - weight] + weight > dp[w]) {
+                    dp[w] = dp[w - weight] + weight;
+                    selected[i][w] = true;
                 }
             }
         }
-
-        // Backtracking to find the chosen packages
-        int w = capacity;
-        for (i = weights.length; i > 0 && w > 0; i--) {
-            if (dp[i][w] != dp[i - 1][w]) {
-                String pkgName = packageNames[i - 1];
-                result.put(pkgName, packages.get(pkgName));
-                w -= packages.get(pkgName);
+        
+        // Trace back to find selected packages
+        HashMap<String, Integer> carico = new HashMap<>();
+        int w = C;
+        for (int i = pacchetti.size() - 1; i >= 0 && w > 0; i--) {
+            if (selected[i][w]) {
+                Map.Entry<Integer, String> pkg = pacchetti.get(i);
+                carico.put(pkg.getValue(), pkg.getKey());
+                w -= pkg.getKey();
+                pacchetti.remove(i);
             }
         }
-
-        return result;
+        
+        return carico;
     }
+        
 }

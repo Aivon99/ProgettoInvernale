@@ -76,9 +76,7 @@ class Esercizio1{
         return contatore;
     }
     public static int Metodo2(String nomeFile, String percorsoFile,String estensione){
-        
-        
-        return 1;
+    return 1;   
     }
  
     
