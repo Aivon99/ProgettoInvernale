@@ -93,7 +93,7 @@ public class Esercizio2 {
             }
         }
         
-        // Trace back to find selected packages
+    
         HashMap<String, Integer> carico = new HashMap<>();
         int w = C;
         for (int i = pacchetti.size() - 1; i >= 0 && w > 0; i--) {
